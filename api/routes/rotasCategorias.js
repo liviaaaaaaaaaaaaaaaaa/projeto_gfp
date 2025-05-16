@@ -12,22 +12,22 @@ class rotasCategorias {
         try {
             const categorias = await BD.query(`INSERT INTO categorias
                  (nome, tipo_transacao, gasto_fixo, id_usuario) VALUES ($1, $2, $3, $4) RETURNING *`,
-                 [nome, tipo_transacao, gasto_fixo, id_usuario]);
+                [nome, tipo_transacao, gasto_fixo, id_usuario]);
             return res.status(201).json(categorias.rows[0]);
         } catch (error) {
             return res.status(500).json({ error: "Erro ao criar Categoria", message: error.message });
         }
     }
-    static async listarTodas(req, res){
+    static async listarTodas(req, res) {
         try {
             const categorias = await BD.query(`select c.nome, c.tipo_transacao, c.gasto_fixo, c.ativo, u.nome as nome_usuario from
             categorias c join usuarios u on c.id_usuario = u.id_usuario where c.ativo = true`);
             return res.status(200).json(categorias.rows); //Retorna lista de usuarios
-        } catch(error){
-            return res.status(500).json({error: "Erro ao listar resenhas", error: error.message});
+        } catch (error) {
+            return res.status(500).json({ error: "Erro ao listar resenhas", error: error.message });
         }
     }
-    static async Deletar(req, res){
+    static async Deletar(req, res) {
         const { id } = req.params;
         try {
             const query = `UPDATE categorias SET ativo = false WHERE id_categoria = $1`;
@@ -35,11 +35,11 @@ class rotasCategorias {
             // Executar a query
             const categoria = await BD.query(query, valores)
             return res.status(200).json(categoria.rows[0])
-        } catch(error){
-            return res.status(500).json({error: "Erro ao atualizar dados do usuário", error: error.message});
+        } catch (error) {
+            return res.status(500).json({ error: "Erro ao atualizar dados do usuário", error: error.message });
         }
     }
-    static async atualizarTodosCampos (req, res){
+    static async atualizarTodosCampos(req, res) {
         const { id } = req.params;
         const { nome, tipo_transacao, gasto_fixo, id_usuario } = req.body;
         try {
@@ -49,54 +49,54 @@ class rotasCategorias {
             const categoriaAtualizada = await BD.query(`
                 SELECT * FROM categorias WHERE id_categoria = $1`, [id])
             return res.status(200).json(categoriaAtualizada)
-    } catch(error){
-        return res.status(500).json({error: "Erro ao atualizar dados da categoria", error: error.message});
+        } catch (error) {
+            return res.status(500).json({ error: "Erro ao atualizar dados da categoria", error: error.message });
+        }
     }
-}
-static async Atualizar(req, res){
-    const { id } = req.params;
-    const { nome, tipo_transacao, gasto_fixo, id_usuario } = req.body;
-    try {
-        // Inicializar arrays(vetores) para armazenar os campos e valores a serem atualizados
-        const campos = []
-        const valores = []
-        // Verifica quais campos foram fornecidos
-        if(nome !== undefined){
-            campos.push(`nome = $${valores.length + 1}`)
-            valores.push(nome)
-        }
-        if(tipo_transacao!== undefined){
-            campos.push(`tipo_transacao = $${valores.length + 1}`)
-            valores.push(tipo_transacao)
-        }
-        if(gasto_fixo!== undefined){
-            campos.push(`gasto_fixo = $${valores.length + 1}`)
-            valores.push(gasto_fixo)
-        }
-        if(id_usuario!== undefined){
-            campos.push(`id_usuario = $${valores.length + 1}`)
-            valores.push(id_usuario)
-        }
-        if (campos.length === 0){
-            return res.status(400).json({erro: "Informe os campos a serem atualizados"})
-        }
-       
-        // Montar a query
-        const query = `UPDATE categorias SET ${campos.join(',')}
-        WHERE id_categoria = ${id} returning *`
-       
-        // Executar a query
-        const categoria = await BD.query(query, valores)
+    static async Atualizar(req, res) {
+        const { id } = req.params;
+        const { nome, tipo_transacao, gasto_fixo, id_usuario } = req.body;
+        try {
+            // Inicializar arrays(vetores) para armazenar os campos e valores a serem atualizados
+            const campos = []
+            const valores = []
+            // Verifica quais campos foram fornecidos
+            if (nome !== undefined) {
+                campos.push(`nome = $${valores.length + 1}`)
+                valores.push(nome)
+            }
+            if (tipo_transacao !== undefined) {
+                campos.push(`tipo_transacao = $${valores.length + 1}`)
+                valores.push(tipo_transacao)
+            }
+            if (gasto_fixo !== undefined) {
+                campos.push(`gasto_fixo = $${valores.length + 1}`)
+                valores.push(gasto_fixo)
+            }
+            if (id_usuario !== undefined) {
+                campos.push(`id_usuario = $${valores.length + 1}`)
+                valores.push(id_usuario)
+            }
+            if (campos.length === 0) {
+                return res.status(400).json({ erro: "Informe os campos a serem atualizados" })
+            }
 
-        // Verifica se o usuario foi atualizado
-        if(categoria.rows.length === 0){
-            return res.status(404).json({erro: "Categoria não encontrada"})
+            // Montar a query
+            const query = `UPDATE categorias SET ${campos.join(',')}
+        WHERE id_categoria = ${id} returning *`
+
+            // Executar a query
+            const categoria = await BD.query(query, valores)
+
+            // Verifica se o usuario foi atualizado
+            if (categoria.rows.length === 0) {
+                return res.status(404).json({ erro: "Categoria não encontrada" })
+            }
+            return res.status(200).json(categoria.rows[0])
+        } catch (error) {
+            return res.status(500).json({ error: "Erro ao atualizar dados da categoria", error: error.message });
         }
-        return res.status(200).json(categoria.rows[0])
-    } catch(error){
-        return res.status(500).json({error: "Erro ao atualizar dados da categoria", error: error.message});
     }
-}  
     static async ListarporID(req, res) {
         const { id } = req.params;
         try {
@@ -110,7 +110,48 @@ static async Atualizar(req, res){
         catch (error) {
             return res.status(500).json({ error: "Erro ao listar categoria", error: error.message });
         }
-}
+    }
+    //filtrar por tipo de categoria
+    static async ListarCategoria(req, res) {
+        //a  valor sera enviado por parametro na url, deve ser envaido dessa maneira
+        // ?tipo_transacao=entrada
+        const { tipo_transacao } = req.query;
+        try {
+            const filtros = [];
+            const valores = [];
+
+            if (tipo_transacao) {
+                filtros.push(`tipo_transacao = $${valores.length + 1}`);
+                valores.push(tipo_transacao);
+            }
+            const query = `
+                SELECT * FROM categorias 
+                ${filtros.join ? `WHERE ${filtros.join(' AND ')} and ativo = true` : ""}
+                ORDER BY id_categoria DESC;`
+
+            const resultado = await BD.query(query, valores);
+        } catch (error) {
+        }
+    }
+    static async filtrarCategoria(req, res) {
+        const { tipo_transacao } = req.query;
+
+        try {
+            const query = `
+                SELECT * FROM categorias
+                WHERE tipo_transacao = $1 AND ativo = true
+                ORDER BY id_categoria DESC `
+
+            const valores = [tipo_transacao]
+
+            const resposta = await BD.query(query, valores)
+            return res.status(200).json(resposta.rows)
+        } catch (error) {
+            console.error('Erro ao filtrar categoria', error);
+            res.status(500).json({ message: "Erro ao filtrar categorias", error: error.message })
+        }
+    }
 }
 
 export default rotasCategorias;
+

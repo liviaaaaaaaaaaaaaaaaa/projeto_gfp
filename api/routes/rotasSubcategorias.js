@@ -106,6 +106,21 @@ join categorias c on s.id_categoria = c.id_categoria`);
             return res.status(500).json({error: "Erro ao atualizar dados da subcategoria", error: error.message});
         }
     }
+
+    static async filtrarSubcategorias(req, res){
+                const {nome} = req.query;
+                try{
+                    const query = `SELECT * FROM subcategorias
+                    WHERE nome like $1 and ativo = true order by nome desc`;
+                    const valores = [`%${nome}%`];
+
+                    const resposta = await BD.query(query, valores);
+                    return res.status(200).json(resposta.rows);
+                }catch(error){
+                    console.error('erro ao filtrar subcategorias', error);
+                    return res.status(500).json({message: 'Erro ao filtrar subcategorias', error: error.massage})
+                }
+                }
 }
 
 export default rotasSubcategorias;
