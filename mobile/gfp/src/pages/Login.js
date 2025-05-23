@@ -23,21 +23,21 @@ const Login = ({ navigation }) => {
     const [lembrar, setLembrar] = useState(false);
 
     useEffect(() => {
-         const buscarUsuarioLogado = async () => {
-             const usuarioLogado = await AsyncStorage.getItem('UsuarioLogado');
-             if(usuarioLogado){
+        const buscarUsuarioLogado = async () => {
+            const usuarioLogado = await AsyncStorage.getItem('UsuarioLogado');
+            if (usuarioLogado) {
                 const usuario = JSON.parse(usuarioLogado);
-                if(usuario.lembrar == true){
+                if (usuario.lembrar == true) {
                     navigation.navigate('MenuPrincipal');
                 }
-             }
-         }
-         buscarUsuarioLogado();
+            }
+        }
+        buscarUsuarioLogado();
     }, [])
     const botaoLogin = async () => {
 
         try {
-            if (email == '' || senha == '') {
+            if (!email || !senha) {
                 throw new Error('Preencha todos os campos');
             }
             //autenticando utilizando a API de backend com o fetch e recebendo o token
@@ -46,18 +46,15 @@ const Login = ({ navigation }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    email: email,
-                    senha: senha,
-                }),
+                body: JSON.stringify({ email, senha }),
             });
-            
+
             const dados = await resposta.json();
 
             if (resposta.ok) {
                 console.log('Login bem-sucedido:', dados);
                 // Aqui você pode armazenar o token em um estado global ou AsyncStorage, se necessário
-                AsyncStorage.setItem('UsuarioLogado', JSON.stringify({...dados, lembrar}));
+                AsyncStorage.setItem('UsuarioLogado', JSON.stringify({ ...dados, lembrar }));
                 navigation.navigate('MenuPrincipal');
 
             } else {
@@ -67,7 +64,7 @@ const Login = ({ navigation }) => {
         } catch (error) {
             console.error('Erro ao realizar login:', error);
             alert(error.message);
-            return;
+
         }
     };
 
@@ -151,9 +148,9 @@ const Login = ({ navigation }) => {
                     </View>
 
                     <View style={Estilos_Login.forgotPasswordContainer}>
-                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                          <Switch value={lembrar} onValueChange={setLembrar} />
-                          <Text>Lembrar-me</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Switch value={lembrar} onValueChange={setLembrar} />
+                            <Text>Lembrar-me</Text>
                         </View>
 
                         <TouchableOpacity>

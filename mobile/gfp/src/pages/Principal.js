@@ -24,10 +24,11 @@ export default function Principal({navigation}) {
     return (
         <View>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}> 
-                <Text>Usuário: {usuario.nome}</Text>
+                <Text>Usuário</Text>
                 <Button title='Sair' onPress={botaoLogout}/>
             </View>
             <Text>Principal</Text>
+              <Text>Categorias</Text>
         </View>
         
     )

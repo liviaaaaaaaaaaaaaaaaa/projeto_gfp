@@ -9,14 +9,20 @@ import rotasSubcategorias from './routes/rotasSubcategorias.js';
 import RotasContas from './routes/rotasContas.js';
 import rotasTransacoes from './routes/rotasTransacoes.js';
 // import rotasTransacoes from './routes/rotasTransacoes.js';
+
+import swagger from 'swagger-ui-express';
+import swaggerSpec from './swagger.js';
+
 const app = express()
 testarConexao();
 
 app.use(cors())
 app.use(express.json())
 
+
+app.use('/', swagger.serve, swagger.setup(swaggerSpec, ));
 app.get('/', (req, res) => {
-    res.send('API funcionando!')
+  res.redirect('/api-docs');
 })
 
 //Rotas Usuarios
@@ -70,13 +76,13 @@ app.get('/transacoes/vencidas/:id_usuario', rotasTransacoes.transacoesVencidas)
 // app.delete('/transacoes/:id_transacao', rotasTransacoes.deletar)
 
 // Rotas Contas
+app.get('/contas', autenticarToken, RotasContas.ListarContas)
 app.post('/contas', RotasContas.novaConta)
 app.get('/contas/filtrarContas', RotasContas.filtrarContas)
-app.get('/contas', RotasContas.ListarContas)
 app.get('/contas/:id_conta', RotasContas.BuscarId)
 app.patch('/contas/:id_conta', RotasContas.AtualizarContas)
 app.put('/contas/:id_conta', RotasContas.atualizarTodosCampos)
-app.delete('/contas/:id_conta', RotasContas.deletar)
+app.delete('/contas/:id', RotasContas.deletar)
 
 
 const porta = 3000;
