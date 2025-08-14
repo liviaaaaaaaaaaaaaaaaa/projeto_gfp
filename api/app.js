@@ -20,23 +20,24 @@ app.use(cors())
 app.use(express.json())
 
 
-app.use('/', swagger.serve, swagger.setup(swaggerSpec, ));
+app.use('/api-docs', swagger.serve, swagger.setup(swaggerSpec, ));
 app.get('/', (req, res) => {
   res.redirect('/api-docs');
 })
 
 //Rotas Usuarios
+app.post('/usuarios/login', rotasUsuarios.login)
 app.post('/usuarios', rotasUsuarios.novoUsuario)
 app.get('/usuarios', rotasUsuarios.listarUsuarios)
 app.delete('/usuarios/:id', autenticarToken, rotasUsuarios.deletarUsuarios)
 app.patch('/usuarios/:id', autenticarToken, rotasUsuarios.atualizar)
 app.put('/usuarios', rotasUsuarios.editarUsuarios)
-app.post('/usuarios/login', rotasUsuarios.login)
+
 app.post('/usuarios', autenticarToken, rotasUsuarios.listarUsuarios)
 app.get('/usuarios/:id', autenticarToken, rotasUsuarios.filtrarUsuarios)
 
 // Rotas categorias
-app.post('/categorias', autenticarToken,rotasCategorias.novaCategoria)
+app.post('/categorias', autenticarToken, rotasCategorias.novaCategoria)
 app.get('/categorias/filtrarCategorias', rotasCategorias.filtrarCategoria)
 app.get('/categorias', rotasCategorias.listarTodas)
 app.delete('/categorias/:id', rotasCategorias.Deletar)

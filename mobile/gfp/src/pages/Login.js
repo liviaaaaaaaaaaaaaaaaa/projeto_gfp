@@ -44,10 +44,13 @@ const Login = ({ navigation }) => {
             const resposta = await fetch(`${enderecoServidor}/usuarios/login`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, senha }),
-            });
+                    "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          senha: senha,
+        }),
+      });
 
             const dados = await resposta.json();
 
@@ -55,7 +58,7 @@ const Login = ({ navigation }) => {
                 console.log('Login bem-sucedido:', dados);
                 // Aqui você pode armazenar o token em um estado global ou AsyncStorage, se necessário
                 AsyncStorage.setItem('UsuarioLogado', JSON.stringify({ ...dados, lembrar }));
-                navigation.navigate('MenuPrincipal');
+                navigation.navigate('MenuDrawer');
 
             } else {
                 throw new Error(dados.message || 'Erro ao fazer login');
@@ -170,6 +173,7 @@ const Login = ({ navigation }) => {
                             <Text style={Estilos.botaoTexto}>Entrar</Text>
                         </LinearGradient>
                     </TouchableOpacity>
+
 
                     <View style={Estilos_Login.signUpContainer}>
                         <Text style={Estilos_Login.signUpText}>Não tem uma conta? </Text>

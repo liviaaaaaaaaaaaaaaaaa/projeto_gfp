@@ -1,24 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { UsuarioContext } from '../UsuarioContext';
 export default function Principal({navigation}) {
-    const [usuario, setUsuario] = useState({});
-    
+    const { dadosUsuario, setDadosUsuario, carregando } = useContext(UsuarioContext);
+
+    const navigate = useNavigate();
     useEffect( () =>{
-        const buscarUsuario = async () => {
-            const usuarioLogado = await localStorage.getItem('UsuarioLogado');
-            if(usuarioLogado) {
-                setUsuario(JSON.parse(usuarioLogado));
-            }else{
-                navigate('/');
-            }
-            
+        if (!dadosUsuario && !carregando){
+            navigate('/login');
         }
-        buscarUsuario();
-    }, [])
+    }, [dadosUsuario, carregando, navigate]);
     const botaoLogout =  () => {
        try{
            localStorage.removeItem('UsuarioLogado');
+           setDadosUsuario(null);
            navigate('/');
        }catch(error){
         console.error('Erro ao deslogar', error);
@@ -28,7 +23,7 @@ export default function Principal({navigation}) {
         <div>
           <div style={{display: 'flex', flexDirection: 'row',
             justifyContent: 'space-between', alignItems: 'center'}}>
-                <p>Usuário: {usuario.nome}</p>
+                <p>Usuário: {dadosUsuario?.nome}</p>
                 <button onClick={botaoLogout}>Sair</button>
           </div>
           <div style={{padding: '20px'}}>

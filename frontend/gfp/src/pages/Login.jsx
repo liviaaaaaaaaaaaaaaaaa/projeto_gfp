@@ -1,8 +1,11 @@
+import { UsuarioContext } from "../UsuarioContext";
 import { useNavigate, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { enderecoServidor } from "../utils";
 
 export default function Login() {
+
+  const {dadosUsuario, setDadosUsuario} = useContext(UsuarioContext);
   const navigate = useNavigate();
   const handleSubmit = () => {
     navigate("principal");
@@ -54,6 +57,7 @@ useEffect(() => {
              if(usuarioLogado){
                 const usuario = JSON.parse(usuarioLogado);
                 if(usuario.lembrar == true){
+                  setDadosUsuario(usuario);
                     navigate('/Principal')
                 }
              }

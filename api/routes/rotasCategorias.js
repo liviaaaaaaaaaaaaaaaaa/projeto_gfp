@@ -2,7 +2,7 @@ import { BD } from "../db.js";
 
 class rotasCategorias {
     static async novaCategoria(req, res) {
-        const { nome, tipo_transacao, gasto_fixo, id_usuario } = req.body;
+        const { nome, tipo_transacao, gasto_fixo, id_usuario, cor, icone } = req.body;
 
         // // Validação opcional (boa prática)
         // if (!nome || !tipo_transacao || !gasto_fixo || !id_usuario) {
@@ -11,16 +11,18 @@ class rotasCategorias {
 
         try {
             const categorias = await BD.query(`INSERT INTO categorias
-                 (nome, tipo_transacao, gasto_fixo, id_usuario) VALUES ($1, $2, $3, $4) RETURNING *`,
-                [nome, tipo_transacao, gasto_fixo, id_usuario]);
+                 (nome, tipo_transacao, gasto_fixo, id_usuario, cor, icone) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+                [nome, tipo_transacao, gasto_fixo, id_usuario, cor, icone]);
             return res.status(201).json(categorias.rows[0]);
         } catch (error) {
+            console.log("Erro ao criar categoria:", error);
+            
             return res.status(500).json({ error: "Erro ao criar Categoria", message: error.message });
         }
     }
     static async listarTodas(req, res) {
         try {
-            const categorias = await BD.query(`select c.nome, c.tipo_transacao, c.gasto_fixo, c.ativo, u.nome as nome_usuario from
+            const categorias = await BD.query(`select c.*, u.nome as nome_usuario from
             categorias c join usuarios u on c.id_usuario = u.id_usuario where c.ativo = true`);
             return res.status(200).json(categorias.rows); //Retorna lista de usuarios
         } catch (error) {
